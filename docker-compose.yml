@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  ewallet:
+    # Replace OWNER with your GitHub username/org (lowercase) so the image path points to your GHCR package
+    image: "ghcr.io/adapjustin/ewallet:latest"
+    container_name: ewallet-app
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
