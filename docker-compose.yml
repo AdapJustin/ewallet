@@ -1,11 +1,40 @@
-version: '3.8'
 services:
   ewallet:
     # Replace OWNER with your GitHub username/org (lowercase) so the image path points to your GHCR package
     image: "ghcr.io/adapjustin/ewallet:latest"
     container_name: ewallet-app
     ports:
-      - "8080:8080"
+      - "${SERVER_PORT:-8080}:8080"
     restart: unless-stopped
     environment:
       - SPRING_PROFILES_ACTIVE=prod
+      # Datasource settings when running via docker-compose
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:${POSTGRES_PORT:-5432}/${POSTGRES_DB:-ewallet_db}
+      - SPRING_DATASOURCE_USERNAME=dev
+      - SPRING_DATASOURCE_PASSWORD=dev
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:15
+    container_name: ewallet-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: dev
+      POSTGRES_DB: dev
+    # Volume decision is configurable via PG_VOLUME environment variable (.env).
+    # Defaults to a named Docker volume 'pgdata' which persists across container restarts.
+    # To bind a host directory instead (e.g. for local dev), set PG_VOLUME=./pgdata in .env
+    volumes:
+      - ${PG_VOLUME:-pgdata}:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+volumes:
+  pgdata:

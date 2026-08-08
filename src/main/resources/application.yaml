@@ -1,3 +1,26 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+
+
 spring:
   application:
     name: ewallet
+  datasource:
+    # Default values can be overridden via environment variables or .env when running docker-compose
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/dev}
+    username: ${SPRING_DATASOURCE_USERNAME:dev}
+    password: ${SPRING_DATASOURCE_PASSWORD:dev}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  flyway:
+    # Disabled by default. Enable for final deployment by setting SPRING_FLYWAY_ENABLED=true
+    enabled: ${SPRING_FLYWAY_ENABLED:false}
+    locations: classpath:db/migration
+
+#jwt:
+#  secret: ${JWT_SECRET:your-secret-key-must-be-at-least-256-bits-long-for-HS256-algorithm-use-change-in-production}
+#  access-token-expiration: ${JWT_ACCESS_TOKEN_EXPIRATION:300000}
+#  refresh-token-expiration: ${JWT_REFRESH_TOKEN_EXPIRATION:2592000000}

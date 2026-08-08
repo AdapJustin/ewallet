@@ -8,4 +8,6 @@ WORKDIR /app
 COPY target/ewallet-0.0.1-SNAPSHOT.jar app.jar
 
 # Run the JAR when the container starts
+# Expose the application port (mapped by docker run / docker-compose)
+EXPOSE 8080
 CMD ["java", "-jar", "app.jar"]
